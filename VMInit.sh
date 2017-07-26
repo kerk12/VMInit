@@ -22,11 +22,11 @@ fi
 
 case "$1" in
 	start)
-		python /etc/VMInit.py
+		python /etc/VMInit.py --start
 		;;
 	stop)
 		# TODO Check if the VM is running.
-		python /etc/VMInit.py
+		python /etc/VMInit.py --stop
 		;;
 esac
 

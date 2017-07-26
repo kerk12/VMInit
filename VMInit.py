@@ -11,8 +11,8 @@ def loadVMs():
     return vms
 
 parser = argparse.ArgumentParser(description="Starts up VirtualBox VMs at system boot, and shuts them down at powerdown respectively.")
-parser.add_argument("start", help="Turns on all VMs specified in the vmlist file.", action="store_true")
-parser.add_argument("stop", help="Stops (saves the state of) all the VMs specified in the vmlist file.", action="store_true")
+parser.add_argument("--start", help="Turns on all VMs specified in the vmlist file.", action="store_true")
+parser.add_argument("--stop", help="Stops (saves the state of) all the VMs specified in the vmlist file.", action="store_true")
 
 args = parser.parse_args()
 
@@ -22,12 +22,12 @@ if args.start:
     for vm in vms:
         if vm == "":
             continue
-        subprocess.call(["VBoxManage", "startvm", "\"" + vm + "\"", "--type", "headless"])
+        subprocess.call(["VBoxManage", "startvm", vm.rstrip(), "--type", "headless"])
 elif args.stop:
     for vm in vms:
         if vm == "":
             continue
-        subprocess.call(["VBoxManage", "controlvm", "\"" + vm + "\"", "savestate"])
+        subprocess.call(["VBoxManage", "controlvm", vm.rstrip(), "savestate"])
 else:
     print "No arguments specified."
     exit(1)

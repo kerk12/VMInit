@@ -8,6 +8,7 @@ fi
 if [ ! -f /etc/VMInit.py ]; then
     cp ./VMInit.sh /etc/init.d/VMInit
     cp ./VMInit.py /etc/VMInit.py
+    touch /etc/vmlist
 
     echo "The required files have been copied successfully. Please run the following command to enable the init script:"
     echo ""
