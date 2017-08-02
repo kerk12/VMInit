@@ -1,3 +1,13 @@
+"""
+    VMInit
+    A simple script for managing VirtualBox VMs when powering off/booting up a server.
+    Coded by:
+    Kyriakos Giannakis (kerk12gr@gmail.com)
+
+    Licence: GNU GPLv3
+    See the included LICENCE.md file for more info.
+"""
+
 import argparse
 import subprocess  # TODO Switch to subprocess32
 import re
