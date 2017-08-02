@@ -27,12 +27,12 @@ if args.start:
         subprocess.call(["VBoxManage", "startvm", vm.rstrip(), "--type", "headless"])
 elif args.stop:
     for vm in vms:
-        if vm == "":
+        if vm.rstrip() == "":
             continue
 
 
-        subprocess.call(["VBoxManage", "controlvm", vm.rstrip(), "asciipowerbutton"])
-        reg = r'\"' + vm + '" \{\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\}'
+        subprocess.call(["VBoxManage", "controlvm", vm.rstrip(), "acpipowerbutton"])
+        reg = r'\"' + vm.rstrip() + '" \{\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\}'
         found = True
         p = re.compile(reg)
         for i in range(1,5):
@@ -40,7 +40,7 @@ elif args.stop:
             j = 0
             foundLocal = False
             while j < len(runningvms):
-                if p.match(runningvms[j]):
+                if p.match(runningvms[j].rstrip()):
                     foundLocal = True
                     break
                 j += 1
