@@ -1,5 +1,7 @@
 import argparse
 import subprocess  # TODO Switch to subprocess32
+import re
+import time
 
 def loadVMs():
     vmlist = open("/etc/vmlist", "r")
@@ -27,7 +29,31 @@ elif args.stop:
     for vm in vms:
         if vm == "":
             continue
-        subprocess.call(["VBoxManage", "controlvm", vm.rstrip(), "savestate"])
+
+
+        subprocess.call(["VBoxManage", "controlvm", vm.rstrip(), "asciipowerbutton"])
+        reg = r'\"' + vm + '" \{\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\}'
+        found = True
+        p = re.compile(reg)
+        for i in range(1,5):
+            runningvms = subprocess.check_output(["VBoxManage", "list", "runningvms"]).split("\n")
+            j = 0
+            foundLocal = False
+            while j < len(runningvms):
+                if p.match(runningvms[j]):
+                    foundLocal = True
+                    break
+                j += 1
+
+            if not foundLocal:
+                found = False
+                break
+            else:
+                time.sleep(15)
+
+        if found:
+            # The VM didn't shut down.
+            exit(1)
 else:
     print "No arguments specified."
     exit(1)
