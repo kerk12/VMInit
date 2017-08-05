@@ -32,7 +32,8 @@ def checkForRunningVM(name):
             return True
     return False
 
-
+RETRIES = 10
+RETRY_TIME = 5
 
 parser = argparse.ArgumentParser(description="Starts up VirtualBox VMs at system boot, and shuts them down at powerdown respectively.")
 parser.add_argument("--start", help="Turns on all VMs specified in the vmlist file.", action="store_true")
@@ -58,14 +59,14 @@ elif args.stop:
         subprocess.call(["VBoxManage", "controlvm", vm.rstrip(), "acpipowerbutton"])
         found = True
         # 3. Repeat 4 times, 15 seconds of wait time each
-        for i in range(1,5):
+        for i in range(1,RETRIES):
             # 3.4 If a running VM with the name of the shutting-down VM wasn't found, then it's shut down successfully.
             # Move to the next one...
             if not checkForRunningVM(vm.rstrip()):
                 found = False
                 break
             else:
-                time.sleep(15)
+                time.sleep(RETRY_TIME)
 
         # 4. If the VM is found even after 4 checks, then it didn't shut down successfully.
         if found:
