@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+exec 2>/var/log/VMInit.log 2>&1
 
 if [ "$EUID" -ne 0 ]
 then
@@ -8,14 +9,29 @@ then
 fi
 
 if [ ! -f /etc/VMInit.py ]; then
-    cp ./VMInit.sh /etc/init.d/VMInit
-    retval1=$?
-    cp ./VMInit.py /etc/VMInit.py
-    retval2=$?
-    touch /etc/vmlist
-    retval3=$?
-    #check if the copy succeeded
 
+    if  cp ./VMInit.sh /etc/init.d/VMInit ; then
+        retval1=$?
+    else
+	echo "File VMInit.sh does not exist or could not be copied. Exiting."
+	exit 1
+    fi
+    if  cp ./VMInit.py /etc/VMInit.py ; then
+        retval2=$?
+    else
+	rm /etc/init.d/VMInit
+        echo "File VMInit.py does not exist or could not be copied. Exiting."
+        exit 1
+    fi
+    if  touch /etc/vmlist ; then
+        retval3=$?
+    else
+	rm /etc/init.d/VMInit
+	rm /etc/VMInit.py
+        echo "File vmlist could now be created. Exiting."
+        exit 1
+    fi
+    
     echo "Would you like to enable the init script? (yes or no)"
     read answer
     if [ $answer == "yes" ]; then
@@ -36,6 +52,9 @@ if [ ! -f /etc/VMInit.py ]; then
         echo "Copying files failed"
     fi
 
-    exit 0
+else
+    
+    echo "VMInit already exists in your system!"
 fi
 
+exit 0
