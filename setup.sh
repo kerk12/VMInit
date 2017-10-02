@@ -29,7 +29,7 @@ if [ ! -f /etc/VMInit.py ]; then
     if [[ $success -eq 0 ]]; then
         #some details for the user, it's always nice to know where scripts are 
         echo "The required files have been copied successfully."
-        echo "The init script at /etc/init.d/VMInit has beenn enabled with update-rc.d VMInit defaults"
+        echo "The init script at /etc/init.d/VMInit has been enabled with update-rc.d VMInit defaults"
         echo "The python executable resides at /etc/VMInit.py"
         echo "Your VMs list resides at /etc/vmlist" 
     else
