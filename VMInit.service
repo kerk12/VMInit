@@ -1,0 +1,10 @@
+[Unit]
+Description="Start/Stop VirtualBox VMs at boot/shutdown"
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python /etc/VMInit.py --start
+ExecStop=/usr/bin/python /etc/VMInit.py --stop
+
+[Install]
+WantedBy=multi-user.target
