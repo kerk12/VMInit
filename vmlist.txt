@@ -1,0 +1,20 @@
+# Main VM List used by VMInit.
+#
+# VMs that are to be processed by the VMInit script must added here.
+# Commented lines are denoted by the hash character at the beginning.
+#
+# VMs are denoted by their names, one line each.
+#
+# For example, if root has a VM named Redhat1, then you must type:
+#
+# Redhat1
+#
+# If specific VMs are owned by specific users, then please put a double colon (::) and add their names right after it.
+# For example:
+# If the VM named Redhat2 is owned by user JohnDoe, then this is what should be entered:
+#
+# Redhat2::JohnDoe
+#
+# If a username isn't supplied, then it defaults to root.
+#
+

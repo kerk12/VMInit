@@ -23,7 +23,7 @@ if [ ! -f /etc/VMInit.py ]; then
         echo "File VMInit.py does not exist or could not be copied. Exiting."
         exit 1
     fi
-    if  touch /etc/vmlist ; then
+    if  cp ./vmlist.txt /etc/vmlist ; then
         echo "Created file /etc/vmlist. In that file you can list all your existing vms."
     else
 	rm /etc/init.d/VMInit
