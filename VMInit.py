@@ -54,79 +54,80 @@ def check_user(vm_string):
 
     return vm_string, None
 
-# The number of times that VMInit will try to check for a running VM.
-RETRIES = 10
-# After each try, VMInit sleeps for this amount of seconds.
-RETRY_TIME = 5
+if __name__ == "__main__":
+    # The number of times that VMInit will try to check for a running VM.
+    RETRIES = 10
+    # After each try, VMInit sleeps for this amount of seconds.
+    RETRY_TIME = 5
 
-parser = argparse.ArgumentParser(description="Starts up VirtualBox VMs at system boot, and shuts them down at powerdown respectively.")
-parser.add_argument("--start", help="Turns on all VMs specified in the vmlist file.", action="store_true")
-parser.add_argument("--stop", help="Stops (saves the state of) all the VMs specified in the vmlist file.", action="store_true")
+    parser = argparse.ArgumentParser(description="Starts up VirtualBox VMs at system boot, and shuts them down at powerdown respectively.")
+    parser.add_argument("--start", help="Turns on all VMs specified in the vmlist file.", action="store_true")
+    parser.add_argument("--stop", help="Stops (saves the state of) all the VMs specified in the vmlist file.", action="store_true")
 
-args = parser.parse_args()
+    args = parser.parse_args()
 
-vms = loadVMs()
+    vms = loadVMs()
 
-if args.start:
-    for vm in vms:
-        # Strip empty lines and comments.
-        if vm == "":
-            continue
+    if args.start:
+        for vm in vms:
+            # Strip empty lines and comments.
+            if vm == "":
+                continue
 
-        if vm[0] == "#":
-            continue
+            if vm[0] == "#":
+                continue
 
-        # Check for the VM's owner.
-        vm, user = check_user(vm.rstrip())
+            # Check for the VM's owner.
+            vm, user = check_user(vm.rstrip())
 
-        # Start the VM by calling VBoxManage startvm.
-        if user is not None:
-            subprocess.call(["sudo", "-u", user, "VBoxManage", "startvm", vm, "--type", "headless"])
-        else:
-            subprocess.call(["VBoxManage", "startvm", vm, "--type", "headless"])
-
-elif args.stop:
-    # 1. Check every VM in the list
-    for vm in vms:
-        if vm == "":
-            continue
-        if vm[0] == "#":
-            continue
-
-        vm, user = check_user(vm.rstrip())
-
-        # Check if the VM is running, to begin with...
-        if not checkForRunningVM(name=vm, user=user):
-            continue
-
-        # 2. Run VBoxManage controlvm ... acpipowerbutton
-        print "Shutting down", vm
-
-        if user is not None:
-            subprocess.call(["sudo", "-u", user, "VBoxManage", "controlvm", vm, "acpipowerbutton"])
-        else:
-            subprocess.call(["VBoxManage", "controlvm", vm, "acpipowerbutton"])
-
-        found = True
-        # 3. Repeat RETRIES times, RETRY_TIME seconds of wait time each.
-        for i in range(1,RETRIES):
-            # 3.4 If a running VM with the name of the shutting-down VM wasn't found, then it's shut down successfully.
-            # Move to the next one...
-            if not checkForRunningVM(vm, user):
-                found = False
-                break
+            # Start the VM by calling VBoxManage startvm.
+            if user is not None:
+                subprocess.call(["sudo", "-u", user, "VBoxManage", "startvm", vm, "--type", "headless"])
             else:
-                time.sleep(RETRY_TIME)
+                subprocess.call(["VBoxManage", "startvm", vm, "--type", "headless"])
 
-        # 4. If the VM is found even after 4 checks, then it didn't shut down successfully.
-        if found:
-            # The VM didn't shut down.
-            # TODO Fallback...
-            exit(1)
-else:
-    print "No arguments specified."
-    exit(1)
+    elif args.stop:
+        # 1. Check every VM in the list
+        for vm in vms:
+            if vm == "":
+                continue
+            if vm[0] == "#":
+                continue
 
-exit(0)
+            vm, user = check_user(vm.rstrip())
+
+            # Check if the VM is running, to begin with...
+            if not checkForRunningVM(name=vm, user=user):
+                continue
+
+            # 2. Run VBoxManage controlvm ... acpipowerbutton
+            print "Shutting down", vm
+
+            if user is not None:
+                subprocess.call(["sudo", "-u", user, "VBoxManage", "controlvm", vm, "acpipowerbutton"])
+            else:
+                subprocess.call(["VBoxManage", "controlvm", vm, "acpipowerbutton"])
+
+            found = True
+            # 3. Repeat RETRIES times, RETRY_TIME seconds of wait time each.
+            for i in range(1,RETRIES):
+                # 3.4 If a running VM with the name of the shutting-down VM wasn't found, then it's shut down successfully.
+                # Move to the next one...
+                if not checkForRunningVM(vm, user):
+                    found = False
+                    break
+                else:
+                    time.sleep(RETRY_TIME)
+
+            # 4. If the VM is found even after 4 checks, then it didn't shut down successfully.
+            if found:
+                # The VM didn't shut down.
+                # TODO Fallback...
+                exit(1)
+    else:
+        print "No arguments specified."
+        exit(1)
+
+    exit(0)
 
 
