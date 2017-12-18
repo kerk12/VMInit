@@ -4,6 +4,8 @@ Developed by Kyriakos Giannakis (kerk12gr@gmail.com)
 
 A simple script for managing VirtualBox VMs on boot and shutdown.
 
+[![Build Status](https://travis-ci.org/kerk12/VMInit.svg?branch=master)](https://travis-ci.org/kerk12/VMInit)
+
 ## Features:
 - Starts headless VMs when the host boots.
 - Stops the started VMs on poweroff.
