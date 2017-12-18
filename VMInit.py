@@ -13,9 +13,9 @@ import subprocess
 import re
 import time
 
-def loadVMs():
+def loadVMs(vmlist_file="/etc/vmlist"):
     """ Loads the VMs from the vmlist """
-    vmlist = open("/etc/vmlist", "r")
+    vmlist = open(vmlist_file, "r")
     vms = vmlist.readlines()
     vmlist.close()
     if len(vms) == 0:
