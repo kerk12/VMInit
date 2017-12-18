@@ -18,11 +18,18 @@ def loadVMs(vmlist_file="/etc/vmlist"):
     vmlist = open(vmlist_file, "r")
     vms = vmlist.readlines()
     vmlist.close()
+
+    for i in range(len(vms)):  # First things first, strip all newline characters.
+        vms[i] = vms[i].rstrip()
+
+    for line in list(vms):  # Check for comment and empty lines and remove them.
+        if (line and line[0] == "#") or not line:
+            vms.remove(line)
+
     if len(vms) == 0:
         print "No VMs were specified. Edit the vmlist file in /etc/vmlist to specify your VMs"
         exit(1)
 
-    # TODO Strip comment and empty lines.
     return vms
 
 def checkForRunningVM(name, user=None):
@@ -70,13 +77,6 @@ if __name__ == "__main__":
 
     if args.start:
         for vm in vms:
-            # Strip empty lines and comments.
-            if vm == "":
-                continue
-
-            if vm[0] == "#":
-                continue
-
             # Check for the VM's owner.
             vm, user = check_user(vm.rstrip())
 
@@ -89,11 +89,6 @@ if __name__ == "__main__":
     elif args.stop:
         # 1. Check every VM in the list
         for vm in vms:
-            if vm == "":
-                continue
-            if vm[0] == "#":
-                continue
-
             vm, user = check_user(vm.rstrip())
 
             # Check if the VM is running, to begin with...
